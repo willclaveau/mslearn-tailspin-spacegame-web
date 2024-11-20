@@ -15,6 +15,15 @@ ARG INSTALL_ZSH="true"
 # [Optional] Upgrade OS packages to their latest versions
 ARG UPGRADE_PACKAGES="false"
 
+# Install .NET 6 SDK
+RUN apt-get update \
+    && apt-get install -y wget apt-transport-https software-properties-common \
+    && wget https://packages.microsoft.com/config/ubuntu/20.04/prod.list \
+    && mv prod.list /etc/apt/sources.list.d/microsoft-prod.list \
+    && wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add - \
+    && apt-get update \
+    && apt-get install -y dotnet-sdk-6.0
+
 # Install needed packages and setup non-root user. Use a separate RUN statement to add your own dependencies.
 ARG USERNAME=vscode
 ARG USER_UID=1000
@@ -45,3 +54,4 @@ RUN chmod +x /home/vscode/azure-pipelines/start.sh
 
 # Clean up
 RUN rm -rf /var/lib/apt/lists/* /tmp/library-scripts
+
